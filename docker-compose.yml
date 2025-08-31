@@ -11,6 +11,8 @@ services:
       - "80:8080"
     environment:
       - AZURE_FUNCTIONS_BASE_URL=https://agranelos-fybpb6duaadaaxfm.eastus2-01.azurewebsites.net/api
+      - SPRING_SECURITY_USER_NAME=user
+      - SPRING_SECURITY_USER_PASSWORD=myStrongPassword123
     depends_on:
       - azure-functions
 

@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agranelos-bff
+
+# Configuración para invocación de funciones serverless
+azure:
+  functions:
+    base-url: ${AZURE_FUNCTIONS_BASE_URL:http://localhost:7071/api}
+
+# Logging básico
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+
+# Seguridad básica (puedes personalizar según tus necesidades)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+# Puedes agregar más propiedades según necesidades del entorno

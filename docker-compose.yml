@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  bff:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: agranelos-bff
+    ports:
+      - "8080:8080"
+    environment:
+      - AZURE_FUNCTIONS_BASE_URL=https://agranelos-fybpb6duaadaaxfm.eastus2-01.azurewebsites.net/api
+    depends_on:
+      - azure-functions
+
+  azure-functions:
+    image: mcr.microsoft.com/azure-functions/java:4-java17-core-tools
+    container_name: azure-functions
+    environment:
+      - AzureWebJobsStorage=UseDevelopmentStorage=true
+      - FUNCTIONS_WORKER_RUNTIME=java
+    volumes:
+      - ./functions:/home/site/wwwroot
+    ports:
+      - "7071:7071"
+    command: ["func", "start", "--verbose"]
+
+networks:
+  default:
+    name: agranelos-network

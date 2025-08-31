@@ -1,0 +1,39 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.sw?
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de control de versiones
+.git
+.gitignore
+
+# Otros
+*.class
+*.jar
+*.war
+*.ear
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Node/npm (por si hay frontends o scripts)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Azure Functions locales
+functions/
+local.settings.json

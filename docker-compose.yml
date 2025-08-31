@@ -8,7 +8,7 @@ services:
       network: host
     container_name: agranelos-bff
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
       - AZURE_FUNCTIONS_BASE_URL=https://agranelos-fybpb6duaadaaxfm.eastus2-01.azurewebsites.net/api
     depends_on:

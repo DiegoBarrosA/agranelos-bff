@@ -91,6 +91,20 @@ public class ProductoController {
             .uri(url)
             .bodyValue(productoDto)
             .retrieve()
+            .onStatus(
+                status -> status.is4xxClientError(),
+                response ->
+                    response
+                        .bodyToMono(String.class)
+                        .map(body -> new RuntimeException("Error 4xx: " + body))
+            )
+            .onStatus(
+                status -> status.is5xxServerError(),
+                response ->
+                    response
+                        .bodyToMono(String.class)
+                        .map(body -> new RuntimeException("Error 5xx: " + body))
+            )
             .bodyToMono(Object.class)
             .map(body -> ResponseEntity.status(HttpStatus.CREATED).body(body))
             .onErrorResume(e ->
@@ -100,7 +114,9 @@ public class ProductoController {
                             "error",
                             "No se pudo crear el producto",
                             "detalle",
-                            e.getMessage()
+                            e.getMessage(),
+                            "url",
+                            url
                         )
                     )
                 )
@@ -118,6 +134,20 @@ public class ProductoController {
             .uri(url)
             .bodyValue(productoDto)
             .retrieve()
+            .onStatus(
+                status -> status.is4xxClientError(),
+                response ->
+                    response
+                        .bodyToMono(String.class)
+                        .map(body -> new RuntimeException("Error 4xx: " + body))
+            )
+            .onStatus(
+                status -> status.is5xxServerError(),
+                response ->
+                    response
+                        .bodyToMono(String.class)
+                        .map(body -> new RuntimeException("Error 5xx: " + body))
+            )
             .bodyToMono(Object.class)
             .map(ResponseEntity::ok)
             .onErrorResume(e ->
@@ -127,7 +157,11 @@ public class ProductoController {
                             "error",
                             "No se pudo actualizar el producto",
                             "detalle",
-                            e.getMessage()
+                            e.getMessage(),
+                            "url",
+                            url,
+                            "productId",
+                            id
                         )
                     )
                 )

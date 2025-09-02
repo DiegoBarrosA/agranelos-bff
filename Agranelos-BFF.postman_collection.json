@@ -56,7 +56,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Producto ejemplo\",\n  \"descripcion\": \"Descripción del producto\",\n  \"precio\": 100.0,\n  \"stock\": 50\n}"
+          "raw": "{\n  \"nombre\": \"Producto ejemplo\",\n  \"descripcion\": \"Descripción del producto de ejemplo\",\n  \"precio\": 99.99,\n  \"stock\": 25\n}"
         },
         "url": {
           "raw": "{{base_url}}/api/productos",
@@ -77,7 +77,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Producto actualizado\",\n  \"descripcion\": \"Nueva descripción\",\n  \"precio\": 120.0,\n  \"stock\": 40\n}"
+          "raw": "{\n  \"nombre\": \"Producto actualizado\",\n  \"descripcion\": \"Nueva descripción del producto actualizado\",\n  \"precio\": 149.99,\n  \"stock\": 15\n}"
         },
         "url": {
           "raw": "{{base_url}}/api/productos/{{id}}",
@@ -106,7 +106,7 @@
     },
     {
       "key": "id",
-      "value": "1"
+      "value": "3"
     },
     {
       "key": "username",

@@ -20,18 +20,24 @@ public class ProductoDto {
 
     @NotNull(message = "El stock es obligatorio")
     @Positive(message = "El stock debe ser positivo")
-    private Integer stock;
+    private Integer cantidadEnStock;
 
     // Constructor vacío
     public ProductoDto() {}
 
     // Constructor completo
-    public ProductoDto(Long id, String nombre, String descripcion, BigDecimal precio, Integer stock) {
+    public ProductoDto(
+        Long id,
+        String nombre,
+        String descripcion,
+        BigDecimal precio,
+        Integer cantidadEnStock
+    ) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
-        this.stock = stock;
+        this.cantidadEnStock = cantidadEnStock;
     }
 
     // Getters y Setters
@@ -68,11 +74,11 @@ public class ProductoDto {
         this.precio = precio;
     }
 
-    public Integer getStock() {
-        return stock;
+    public Integer getCantidadEnStock() {
+        return cantidadEnStock;
     }
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setCantidadEnStock(Integer cantidadEnStock) {
+        this.cantidadEnStock = cantidadEnStock;
     }
 }

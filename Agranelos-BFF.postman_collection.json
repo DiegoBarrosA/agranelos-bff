@@ -52,10 +52,6 @@
           {
             "key": "Content-Type",
             "value": "application/json"
-          },
-          {
-            "key": "X-Requested-With",
-            "value": "XMLHttpRequest"
           }
         ],
         "body": {
@@ -77,10 +73,6 @@
           {
             "key": "Content-Type",
             "value": "application/json"
-          },
-          {
-            "key": "X-Requested-With",
-            "value": "XMLHttpRequest"
           }
         ],
         "body": {
@@ -98,12 +90,7 @@
       "name": "Eliminar producto",
       "request": {
         "method": "DELETE",
-        "header": [
-          {
-            "key": "X-Requested-With",
-            "value": "XMLHttpRequest"
-          }
-        ],
+        "header": [],
         "url": {
           "raw": "{{base_url}}/api/productos/{{id}}",
           "host": ["{{base_url}}"],

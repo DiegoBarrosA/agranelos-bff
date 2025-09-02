@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "Agranelos BFF - Productos API",
+    "description": "Colección Postman para los endpoints de productos del BFF de Agranelos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{username}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{password}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Listar todos los productos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/productos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "productos"]
+        }
+      }
+    },
+    {
+      "name": "Obtener producto por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/productos/{{id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "productos", "{{id}}"]
+        }
+      }
+    },
+    {
+      "name": "Crear nuevo producto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Requested-With",
+            "value": "XMLHttpRequest"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Producto ejemplo\",\n  \"descripcion\": \"Descripción del producto\",\n  \"precio\": 100.0,\n  \"stock\": 50\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/productos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "productos"]
+        }
+      }
+    },
+    {
+      "name": "Actualizar producto existente",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Requested-With",
+            "value": "XMLHttpRequest"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Producto actualizado\",\n  \"descripcion\": \"Nueva descripción\",\n  \"precio\": 120.0,\n  \"stock\": 40\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/productos/{{id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "productos", "{{id}}"]
+        }
+      }
+    },
+    {
+      "name": "Eliminar producto",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-Requested-With",
+            "value": "XMLHttpRequest"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/productos/{{id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "productos", "{{id}}"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "username",
+      "value": "user"
+    },
+    {
+      "key": "password",
+      "value": "myStrongPassword123"
+    }
+  ]
+}

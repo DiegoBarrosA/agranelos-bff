@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Agranelos BFF - Productos API",
-    "description": "Colección Postman para los endpoints de productos del BFF de Agranelos.",
+    "name": "Agranelos BFF - API Completa",
+    "description": "Colección Postman para todos los endpoints del BFF de Agranelos (Productos, Bodegas y GraphQL).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -21,82 +21,271 @@
   },
   "item": [
     {
-      "name": "Listar todos los productos",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/api/productos",
-          "host": ["{{base_url}}"],
-          "path": ["api", "productos"]
-        }
-      }
-    },
-    {
-      "name": "Obtener producto por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/api/productos/{{id}}",
-          "host": ["{{base_url}}"],
-          "path": ["api", "productos", "{{id}}"]
-        }
-      }
-    },
-    {
-      "name": "Crear nuevo producto",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Listar todos los productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos"]
+            }
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Producto ejemplo\",\n  \"descripcion\": \"Descripción del producto de ejemplo\",\n  \"precio\": 99.99,\n  \"cantidadEnStock\": 25\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/productos",
-          "host": ["{{base_url}}"],
-          "path": ["api", "productos"]
-        }
-      }
-    },
-    {
-      "name": "Actualizar producto existente",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+        {
+          "name": "Obtener producto por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/productos/{{producto_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos", "{{producto_id}}"]
+            }
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Producto actualizado\",\n  \"descripcion\": \"Nueva descripción del producto actualizado\",\n  \"precio\": 149.99,\n  \"cantidadEnStock\": 15\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/api/productos/{{id}}",
-          "host": ["{{base_url}}"],
-          "path": ["api", "productos", "{{id}}"]
+        {
+          "name": "Crear nuevo producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto ejemplo\",\n  \"descripcion\": \"Descripción del producto de ejemplo\",\n  \"precio\": 99.99,\n  \"cantidadEnStock\": 25\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar producto existente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto actualizado\",\n  \"descripcion\": \"Nueva descripción del producto actualizado\",\n  \"precio\": 149.99,\n  \"cantidadEnStock\": 15\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/productos/{{producto_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos", "{{producto_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/productos/{{producto_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "productos", "{{producto_id}}"]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "Eliminar producto",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/api/productos/{{id}}",
-          "host": ["{{base_url}}"],
-          "path": ["api", "productos", "{{id}}"]
+      "name": "Bodegas",
+      "item": [
+        {
+          "name": "Listar todas las bodegas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bodegas",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas"]
+            }
+          }
+        },
+        {
+          "name": "Obtener bodega por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas", "{{bodega_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear nueva bodega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bodega Central\",\n  \"ubicacion\": \"Av. Principal 123, Ciudad\",\n  \"capacidad\": 5000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bodegas",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar bodega existente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bodega Central Actualizada\",\n  \"ubicacion\": \"Av. Principal 123, Ciudad (Nueva ubicación)\",\n  \"capacidad\": 7500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas", "{{bodega_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar bodega",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas", "{{bodega_id}}"]
+            }
+          }
         }
-      }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "Info del endpoint GraphQL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Consulta GraphQL - Listar productos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ productos { id nombre descripcion precio cantidadEnStock } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Consulta GraphQL - Listar bodegas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ bodegas { id nombre ubicacion capacidad } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Consulta GraphQL - Producto por ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetProducto($id: Int!) { producto(id: $id) { id nombre descripcion precio cantidadEnStock } }\",\n  \"variables\": {\n    \"id\": 1\n  },\n  \"operationName\": \"GetProducto\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Consulta GraphQL - Bodega por ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetBodega($id: Int!) { bodega(id: $id) { id nombre ubicacion capacidad } }\",\n  \"variables\": {\n    \"id\": 1\n  },\n  \"operationName\": \"GetBodega\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -105,8 +294,12 @@
       "value": "http://localhost:8080"
     },
     {
-      "key": "id",
-      "value": "3"
+      "key": "producto_id",
+      "value": "1"
+    },
+    {
+      "key": "bodega_id",
+      "value": "1"
     },
     {
       "key": "username",

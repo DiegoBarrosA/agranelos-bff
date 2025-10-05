@@ -51,18 +51,31 @@ Para más detalles sobre los endpoints y ejemplos de uso, consulta [ENDPOINTS_MA
 
 ---
 
-## 🐳 Uso con Docker
+## 🐳 Uso con Docker/Podman
 
 ```bash
-# Construir la imagen
+# Construir la imagen con Docker
 docker build -t agranelos-bff .
+
+# O con Podman
+podman build -t agranelos-bff .
 
 # Ejecutar el contenedor
 docker run -p 8080:8080 \
   -e AZURE_FUNCTIONS_BASE_URL="https://<tu-app>.azurewebsites.net/api" \
-  -e AZURE_FUNCTIONS_API_KEY="<tu-api-key>" \
+  -e SPRING_SECURITY_USER_NAME="user" \
+  -e SPRING_SECURITY_USER_PASSWORD="myStrongPassword123" \
+  agranelos-bff
+
+# O con Podman
+podman run -d --name agranelos-bff -p 8080:8080 \
+  -e AZURE_FUNCTIONS_BASE_URL="https://<tu-app>.azurewebsites.net/api" \
+  -e SPRING_SECURITY_USER_NAME="user" \
+  -e SPRING_SECURITY_USER_PASSWORD="myStrongPassword123" \
   agranelos-bff
 ```
+
+Ver [PRUEBAS_PODMAN.md](PRUEBAS_PODMAN.md) para más detalles sobre pruebas con contenedores.
 
 ---
 
@@ -77,6 +90,11 @@ docker run -p 8080:8080 \
 
 ### Postman
 - Importa la colección `Agranelos-BFF.postman_collection.json` en Postman.
+- Importa los entornos desde la carpeta `postman/`:
+  - **Local.postman_environment.json** - Para desarrollo local
+  - **Docker.postman_environment.json** - Para contenedores locales
+  - **AWS.postman_environment.json** - Para despliegue en AWS
+  - **Azure.postman_environment.json** - Para despliegue en Azure
 - La colección incluye ejemplos organizados para:
   - **Productos:** 5 endpoints con datos de prueba
   - **Bodegas:** 5 endpoints con datos de prueba

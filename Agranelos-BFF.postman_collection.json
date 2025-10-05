@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Agranelos BFF - API Completa",
-    "description": "Colección Postman para todos los endpoints del BFF de Agranelos (Productos, Bodegas y GraphQL).",
+    "description": "Colección Postman para todos los endpoints del BFF de Agranelos (Productos, Bodegas y GraphQL).\n\n## Entornos Disponibles\nEsta colección incluye 4 archivos de entorno en la carpeta `postman/`:\n- **Local**: http://localhost:8080 (desarrollo local)\n- **Docker/Podman**: http://localhost:8080 (contenedor local)\n- **AWS**: https://your-bff-domain.amazonaws.com (producción AWS)\n- **Azure**: https://your-bff-app.azurewebsites.net (producción Azure)\n\n## Cómo usar\n1. Importa la colección en Postman\n2. Importa el entorno que desees usar desde `postman/`\n3. Selecciona el entorno en el dropdown de Postman\n4. ¡Listo para probar!\n\n## Variables\n- `base_url`: URL base del BFF\n- `producto_id`: ID de producto para pruebas\n- `bodega_id`: ID de bodega para pruebas\n- `username`: Usuario para autenticación HTTP Basic\n- `password`: Contraseña para autenticación HTTP Basic\n\n## Autenticación\nTodos los endpoints requieren autenticación HTTP Basic configurada a nivel de colección.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -202,7 +202,7 @@
           }
         },
         {
-          "name": "Consulta GraphQL - Listar productos",
+          "name": "Health Check",
           "request": {
             "method": "POST",
             "header": [
@@ -213,7 +213,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"{ productos { id nombre descripcion precio cantidadEnStock } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+              "raw": "{\n  \"query\": \"{ health }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/graphql",
@@ -223,7 +223,7 @@
           }
         },
         {
-          "name": "Consulta GraphQL - Listar bodegas",
+          "name": "Query - Listar todos los productos",
           "request": {
             "method": "POST",
             "header": [
@@ -234,7 +234,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"{ bodegas { id nombre ubicacion capacidad } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+              "raw": "{\n  \"query\": \"{ productos { id nombre descripcion precio cantidad fechaCreacion fechaActualizacion } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/graphql",
@@ -244,7 +244,7 @@
           }
         },
         {
-          "name": "Consulta GraphQL - Producto por ID",
+          "name": "Query - Producto por ID (con variables)",
           "request": {
             "method": "POST",
             "header": [
@@ -255,7 +255,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"query GetProducto($id: Int!) { producto(id: $id) { id nombre descripcion precio cantidadEnStock } }\",\n  \"variables\": {\n    \"id\": 1\n  },\n  \"operationName\": \"GetProducto\"\n}"
+              "raw": "{\n  \"query\": \"query GetProducto($id: ID!) { producto(id: $id) { id nombre descripcion precio cantidad fechaCreacion fechaActualizacion } }\",\n  \"variables\": {\n    \"id\": \"{{producto_id}}\"\n  },\n  \"operationName\": \"GetProducto\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/graphql",
@@ -265,7 +265,7 @@
           }
         },
         {
-          "name": "Consulta GraphQL - Bodega por ID",
+          "name": "Query - Productos (solo campos básicos)",
           "request": {
             "method": "POST",
             "header": [
@@ -276,7 +276,196 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"query\": \"query GetBodega($id: Int!) { bodega(id: $id) { id nombre ubicacion capacidad } }\",\n  \"variables\": {\n    \"id\": 1\n  },\n  \"operationName\": \"GetBodega\"\n}"
+              "raw": "{\n  \"query\": \"{ productos { id nombre precio } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Query - Listar todas las bodegas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ bodegas { id nombre ubicacion capacidad fechaCreacion fechaActualizacion } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Query - Bodega por ID (con variables)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetBodega($id: ID!) { bodega(id: $id) { id nombre ubicacion capacidad fechaCreacion fechaActualizacion } }\",\n  \"variables\": {\n    \"id\": \"{{bodega_id}}\"\n  },\n  \"operationName\": \"GetBodega\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Query - Consulta múltiple (productos y bodegas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ productos { id nombre precio } bodegas { id nombre ubicacion } }\",\n  \"variables\": {},\n  \"operationName\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation CrearProducto($input: ProductoInput!) { crearProducto(input: $input) { success message producto { id nombre precio cantidad } error } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombre\": \"Producto GraphQL Test\",\n      \"descripcion\": \"Creado via mutation GraphQL\",\n      \"precio\": 99.99,\n      \"cantidad\": 50\n    }\n  },\n  \"operationName\": \"CrearProducto\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Actualizar producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation ActualizarProducto($input: ProductoUpdateInput!) { actualizarProducto(input: $input) { success message producto { id nombre precio cantidad } error } }\",\n  \"variables\": {\n    \"input\": {\n      \"id\": \"{{producto_id}}\",\n      \"nombre\": \"Producto Actualizado via GraphQL\",\n      \"precio\": 149.99,\n      \"cantidad\": 75\n    }\n  },\n  \"operationName\": \"ActualizarProducto\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Eliminar producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation EliminarProducto($id: ID!) { eliminarProducto(id: $id) { success message error } }\",\n  \"variables\": {\n    \"id\": \"{{producto_id}}\"\n  },\n  \"operationName\": \"EliminarProducto\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Crear bodega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation CrearBodega($input: BodegaInput!) { crearBodega(input: $input) { success message bodega { id nombre ubicacion capacidad } error } }\",\n  \"variables\": {\n    \"input\": {\n      \"nombre\": \"Bodega GraphQL Test\",\n      \"ubicacion\": \"Calle Test 123\",\n      \"capacidad\": 3000\n    }\n  },\n  \"operationName\": \"CrearBodega\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Actualizar bodega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation ActualizarBodega($input: BodegaUpdateInput!) { actualizarBodega(input: $input) { success message bodega { id nombre ubicacion capacidad } error } }\",\n  \"variables\": {\n    \"input\": {\n      \"id\": \"{{bodega_id}}\",\n      \"nombre\": \"Bodega Actualizada via GraphQL\",\n      \"ubicacion\": \"Nueva Ubicación 456\",\n      \"capacidad\": 5000\n    }\n  },\n  \"operationName\": \"ActualizarBodega\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/graphql",
+              "host": ["{{base_url}}"],
+              "path": ["api", "graphql"]
+            }
+          }
+        },
+        {
+          "name": "Mutation - Eliminar bodega",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation EliminarBodega($id: ID!) { eliminarBodega(id: $id) { success message error } }\",\n  \"variables\": {\n    \"id\": \"{{bodega_id}}\"\n  },\n  \"operationName\": \"EliminarBodega\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/graphql",

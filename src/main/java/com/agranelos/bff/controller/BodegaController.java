@@ -167,17 +167,101 @@ public class BodegaController {
             );
     }
 
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Object>> eliminarBodega(
+    @GetMapping("/{id}/productos")
+    public Mono<ResponseEntity<Object>> obtenerProductosDeBodega(
         @PathVariable String id
     ) {
+        String url = buildFunctionUrl("/bodegas/" + id + "/productos");
+        return webClient
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToMono(Object.class)
+            .map(ResponseEntity::ok)
+            .onErrorResume(e ->
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        Map.of(
+                            "error",
+                            "No se pudieron obtener los productos de la bodega",
+                            "detalle",
+                            e.getMessage(),
+                            "bodegaId",
+                            id
+                        )
+                    )
+                )
+            );
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Object>> eliminarBodega(
+        @PathVariable String id,
+        @RequestParam(defaultValue = "false") boolean force
+    ) {
+        // Primero verificar si la bodega tiene productos (si no es forzado)
+        if (!force) {
+            String productosUrl = buildFunctionUrl("/bodegas/" + id + "/productos");
+            return webClient
+                .get()
+                .uri(productosUrl)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .flatMap(productos -> {
+                    // Si la respuesta no está vacía, la bodega tiene productos
+                    String productosStr = productos.toString();
+                    if (productosStr.contains("[") && !productosStr.equals("[]")) {
+                        return Mono.just(
+                            ResponseEntity.status(HttpStatus.CONFLICT).body(
+                                Map.of(
+                                    "error", "La bodega contiene productos",
+                                    "mensaje", "Use el parámetro 'force=true' para eliminar la bodega y sus productos, o reasigne los productos primero",
+                                    "productos", productos,
+                                    "bodegaId", id
+                                )
+                            )
+                        );
+                    } else {
+                        // La bodega está vacía, proceder con eliminación
+                        return eliminarBodegaDirecto(id);
+                    }
+                })
+                .onErrorResume(e -> {
+                    // Si no se pueden obtener productos, asumir que la bodega no existe o está vacía
+                    return eliminarBodegaDirecto(id);
+                });
+        } else {
+            // Eliminación forzada - obtener información de productos afectados primero
+            String productosUrl = buildFunctionUrl("/bodegas/" + id + "/productos");
+            return webClient
+                .get()
+                .uri(productosUrl)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .flatMap(productos -> 
+                    eliminarBodegaConDetalles(id, productos)
+                )
+                .onErrorResume(e -> {
+                    // Si no se pueden obtener productos, proceder con eliminación simple
+                    return eliminarBodegaDirecto(id);
+                });
+        }
+    }
+
+    private Mono<ResponseEntity<Object>> eliminarBodegaDirecto(String id) {
         String url = buildFunctionUrl("/bodegas/" + id);
         return webClient
             .delete()
             .uri(url)
             .retrieve()
             .bodyToMono(Object.class)
-            .map(body -> ResponseEntity.status(HttpStatus.NO_CONTENT).build())
+            .map(body -> ResponseEntity.ok(
+                Map.of(
+                    "mensaje", "Bodega eliminada exitosamente",
+                    "bodegaId", id,
+                    "productosAfectados", 0
+                )
+            ))
             .onErrorResume(e ->
                 Mono.just(
                     ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -186,6 +270,47 @@ public class BodegaController {
                             "No se pudo eliminar la bodega",
                             "detalle",
                             e.getMessage()
+                        )
+                    )
+                )
+            );
+    }
+
+    private Mono<ResponseEntity<Object>> eliminarBodegaConDetalles(String id, Object productos) {
+        String url = buildFunctionUrl("/bodegas/" + id);
+        return webClient
+            .delete()
+            .uri(url)
+            .retrieve()
+            .bodyToMono(Object.class)
+            .map(body -> {
+                // Contar productos afectados
+                int productosAfectados = 0;
+                String productosStr = productos.toString();
+                if (productosStr.contains("[") && !productosStr.equals("[]")) {
+                    // Estimación simple basada en comas (productos separados)
+                    productosAfectados = productosStr.split("\\{").length - 1;
+                }
+
+                return ResponseEntity.ok(
+                    Map.of(
+                        "mensaje", "Bodega eliminada exitosamente",
+                        "bodegaId", id,
+                        "productosAfectados", productosAfectados,
+                        "detalleProductos", productos,
+                        "advertencia", "Los productos han perdido su asignación a esta bodega"
+                    )
+                );
+            })
+            .onErrorResume(e ->
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                        Map.of(
+                            "error",
+                            "Error eliminando la bodega",
+                            "detalle",
+                            e.getMessage(),
+                            "productosQueSeAfectaron", productos
                         )
                     )
                 )

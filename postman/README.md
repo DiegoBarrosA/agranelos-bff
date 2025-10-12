@@ -8,9 +8,14 @@ Esta carpeta contiene la colección de Postman y los archivos de entorno para pr
 
 ### Colección Principal
 - **`Agranelos-BFF.postman_collection.json`** (en el directorio raíz)
-  - Colección completa con todos los endpoints
-  - 16 requests organizados en 3 carpetas
+  - Colección completa con todos los endpoints + nuevas funcionalidades 🆕
+  - 20 requests organizados en 4 carpetas
   - Autenticación HTTP Basic configurada
+  - **Nuevas funcionalidades incluidas**:
+    - 🔍 Consulta de productos en bodega
+    - 🔒 Eliminación segura con validación automática
+    - ⚡ Eliminación forzada con detalles
+    - 🔄 Flujos de trabajo completos
 
 ### Entornos (Environments)
 1. **`Local.postman_environment.json`**
@@ -99,16 +104,30 @@ Agranelos BFF - API Completa
 ├── 📁 Bodegas
 │   ├── GET    Listar todas las bodegas
 │   ├── GET    Obtener bodega por ID
+│   ├── GET    🆕 Consultar productos en bodega
 │   ├── POST   Crear nueva bodega
 │   ├── PUT    Actualizar bodega existente
-│   └── DELETE Eliminar bodega
+│   ├── DELETE 🔄 Eliminar bodega (validación automática)
+│   └── DELETE 🆕 Eliminar bodega (forzado con detalles)
 │
-└── 📁 GraphQL
-    ├── GET  Info del endpoint GraphQL
-    ├── POST Consulta GraphQL - Listar productos
-    ├── POST Consulta GraphQL - Listar bodegas
-    ├── POST Consulta GraphQL - Producto por ID
-    └── POST Consulta GraphQL - Bodega por ID
+├── 📁 GraphQL
+│   ├── GET  Info del endpoint GraphQL
+│   ├── POST Consulta GraphQL - Listar productos
+│   ├── POST Consulta GraphQL - Listar bodegas
+│   ├── POST Consulta GraphQL - Producto por ID
+│   └── POST Consulta GraphQL - Bodega por ID
+│
+└── 📁 🆕 Flujos de Trabajo - Gestión de Bodegas
+    ├── 🔍 Flujo A: Consulta Previa y Eliminación Segura
+    │   ├── 1️⃣ Consultar productos en bodega
+    │   ├── 2️⃣ Intentar eliminación segura
+    │   └── 3️⃣ Eliminación forzada (si es necesario)
+    ├── ⚡ Flujo B: Eliminación Directa con Detalles
+    │   └── 🗑️ Eliminación forzada directa
+    └── 🔄 Flujo C: Auditoría de Bodegas
+        ├── 📋 Listar todas las bodegas
+        ├── 🔍 Verificar productos en cada bodega
+        └── ⚠️ Simular eliminación (sin force)
 ```
 
 ---
@@ -129,6 +148,47 @@ La autenticación está configurada a nivel de colección, por lo que aplica aut
 3. Ir a la pestaña **Authorization**
 4. Actualizar username y password
 5. Guardar
+
+---
+
+## 🆕 Nuevas Funcionalidades (Octubre 2025)
+
+### Gestión Mejorada de Eliminación de Bodegas
+
+#### 🔍 **Consulta Previa de Productos**
+Antes de eliminar una bodega, puedes consultar qué productos contiene:
+```http
+GET {{base_url}}/api/bodegas/5/productos
+```
+
+#### 🔒 **Eliminación Segura (Validación Automática)**
+La eliminación normal ahora valida automáticamente si la bodega tiene productos:
+```http
+DELETE {{base_url}}/api/bodegas/5
+```
+- **Si tiene productos**: Retorna `409 Conflict` con detalles
+- **Si está vacía**: Elimina normalmente
+
+#### ⚡ **Eliminación Forzada con Detalles**
+Para forzar eliminación y obtener información de productos afectados:
+```http
+DELETE {{base_url}}/api/bodegas/5?force=true
+```
+
+### 🔄 Flujos de Trabajo Incluidos
+
+La colección ahora incluye **3 flujos completos**:
+
+1. **🔍 Flujo A**: Consulta Previa → Eliminación Segura → Manejo de Conflictos
+2. **⚡ Flujo B**: Eliminación Directa con Información Detallada
+3. **🔄 Flujo C**: Auditoría de Múltiples Bodegas
+
+### 📊 Respuestas Mejoradas
+
+Todas las respuestas de eliminación ahora incluyen:
+- ✅ **Productos afectados**: Número y detalles
+- ✅ **Advertencias claras**: Sobre productos huérfanos
+- ✅ **Sugerencias**: Para próximos pasos
 
 ---
 

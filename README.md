@@ -1,172 +1,205 @@
-# BFF (Backend For Frontend) - Agranelos
+# Agranelos BFF (Backend For Frontend)
 
-Este proyecto implementa un BFF (Backend For Frontend) en Java con Spring Boot, encargado de exponer APIs RESTful para la gestión de productos, bodegas y consultas GraphQL, orquestando llamadas a funciones serverless (Azure Functions) y devolviendo respuestas en formato JSON.
+A comprehensive Backend For Frontend service built with Spring Boot that provides REST and GraphQL APIs for the Agranelos inventory management system. The BFF orchestrates calls to serverless Azure Functions and delivers enhanced warehouse management capabilities.
 
----
+## Overview
 
-## 🚀 Endpoints REST
+This BFF service acts as an intermediary layer between client applications and Azure Functions backend, providing:
 
-### Productos
-- `GET /api/productos` — Lista todos los productos.
-- `GET /api/productos/{id}` — Obtiene un producto por ID.
-- `POST /api/productos` — Crea un nuevo producto.
-- `PUT /api/productos/{id}` — Actualiza un producto existente.
-- `DELETE /api/productos/{id}` — Elimina un producto.
+- **Dual API Support**: Both REST and GraphQL endpoints
+- **Enhanced Warehouse Management**: Intelligent product handling during warehouse deletion
+- **Comprehensive Validation**: Automatic validation with detailed error responses
+- **Containerized Deployment**: Full Docker/Podman support
+- **Extensive Testing**: Complete Postman collection with workflow examples
 
-### Bodegas
-- `GET /api/bodegas` — Lista todas las bodegas.
-- `GET /api/bodegas/{id}` — Obtiene una bodega por ID.
-- `POST /api/bodegas` — Crea una nueva bodega.
-- `PUT /api/bodegas/{id}` — Actualiza una bodega existente.
-- `DELETE /api/bodegas/{id}` — Elimina una bodega.
+## Quick Start
+
+### Prerequisites
+- Java 17+
+- Maven 3.6+
+- Access to Azure Functions backend
+
+### Running Locally
+```bash
+# Set environment variables
+export AZURE_FUNCTIONS_BASE_URL="https://your-functions.azurewebsites.net/api"
+
+# Run application
+mvn spring-boot:run
+```
+
+### Using Containers (Recommended)
+```bash
+# Build and run with Podman Compose
+podman compose up --build
+```
+
+## API Endpoints
+
+### Products
+- `GET /api/productos` - List all products
+- `GET /api/productos/{id}` - Get product by ID
+- `POST /api/productos` - Create new product
+- `PUT /api/productos/{id}` - Update product
+- `DELETE /api/productos/{id}` - Delete product
+
+### Warehouses (Enhanced)
+- `GET /api/bodegas` - List all warehouses
+- `GET /api/bodegas/{id}` - Get warehouse by ID
+- `GET /api/bodegas/{id}/productos` - List products in warehouse
+- `POST /api/bodegas` - Create new warehouse
+- `PUT /api/bodegas/{id}` - Update warehouse
+- `DELETE /api/bodegas/{id}` - Delete warehouse (with validation)
+- `DELETE /api/bodegas/{id}?force=true` - Force delete with details
 
 ### GraphQL
-- `GET /api/graphql` — Información del endpoint GraphQL.
-- `POST /api/graphql` — Ejecuta consultas GraphQL sobre productos y bodegas.
+- `GET /api/graphql` - GraphQL endpoint information
+- `POST /api/graphql` - Execute GraphQL queries
 
-Para más detalles sobre los endpoints y ejemplos de uso, consulta [ENDPOINTS_MAPPING.md](ENDPOINTS_MAPPING.md) y [IMPLEMENTACION_ENDPOINTS.md](IMPLEMENTACION_ENDPOINTS.md).
+## Architecture
 
----
+```mermaid
+graph TB
+    Client[Client Applications] --> BFF[Agranelos BFF :8080]
+    BFF --> Functions[Azure Functions Backend]
+    Functions --> DB[(PostgreSQL Database)]
+    
+    subgraph "BFF Services"
+        BFF --> ProductAPI[Product API]
+        BFF --> WarehouseAPI[Warehouse API]
+        BFF --> GraphQLAPI[GraphQL API]
+    end
+```
 
-## 🛠️ Tecnologías
+## Key Features
 
-- Java 17+
-- Spring Boot 3.x
-- Docker
-- Maven
-- Azure Functions (invocación vía HTTP)
-- Variables de entorno para configuración sensible
+### Enhanced Warehouse Management
+- **Safe Deletion**: Automatic validation prevents accidental data loss
+- **Forced Deletion**: Override validation with detailed impact reporting
+- **Product Consultation**: Query warehouse contents before operations
+- **Detailed Responses**: Comprehensive information about affected products
 
----
+### Validation and Safety
+- Automatic product validation during warehouse deletion
+- Detailed conflict responses with actionable information
+- Optional force parameters for emergency operations
+- Complete audit trail of affected resources
 
-## ⚙️ Configuración
+## Documentation
 
-1. **Variables de entorno**  
-   Configura las siguientes variables antes de ejecutar el BFF:
-   - `AZURE_FUNCTIONS_BASE_URL`: URL base de las funciones serverless.
-   - `AZURE_FUNCTIONS_API_KEY`: (si aplica) API Key para invocar funciones protegidas.
+Comprehensive documentation is available in the `/docs` directory:
 
-2. **Archivo de configuración**  
-   Puedes sobreescribir propiedades en `src/main/resources/application.yml`.
+### API Documentation
+- [Endpoints Mapping](docs/api/endpoints-mapping.md) - Complete endpoint mapping and implementation details
+- [Warehouse Management](docs/api/warehouse-management.md) - Enhanced warehouse deletion functionality
+- [Examples and Usage](docs/api/examples.md) - Practical examples and integration patterns
 
----
+### Development Guide
+- [Setup and Configuration](docs/development/setup.md) - Local development setup and configuration
+- [Docker Deployment](docs/development/docker.md) - Container-based deployment guide
 
-## 🐳 Uso con Docker/Podman
+### Testing Resources
+- [Postman Collection](docs/testing/postman.md) - Comprehensive API testing with Postman
+- [Test Scripts](docs/testing/test-scripts.md) - Automated testing scripts and workflows
 
+## Configuration
+
+### Environment Variables
 ```bash
-# Construir la imagen con Docker
-docker build -t agranelos-bff .
-
-# O con Podman
-podman build -t agranelos-bff .
-
-# Ejecutar el contenedor
-docker run -p 8080:8080 \
-  -e AZURE_FUNCTIONS_BASE_URL="https://<tu-app>.azurewebsites.net/api" \
-  -e SPRING_SECURITY_USER_NAME="user" \
-  -e SPRING_SECURITY_USER_PASSWORD="myStrongPassword123" \
-  agranelos-bff
-
-# O con Podman
-podman run -d --name agranelos-bff -p 8080:8080 \
-  -e AZURE_FUNCTIONS_BASE_URL="https://<tu-app>.azurewebsites.net/api" \
-  -e SPRING_SECURITY_USER_NAME="user" \
-  -e SPRING_SECURITY_USER_PASSWORD="myStrongPassword123" \
-  agranelos-bff
+AZURE_FUNCTIONS_BASE_URL=https://your-functions.azurewebsites.net/api
+SPRING_SECURITY_USER_NAME=user
+SPRING_SECURITY_USER_PASSWORD=your-secure-password
 ```
 
-Ver [PRUEBAS_PODMAN.md](PRUEBAS_PODMAN.md) para más detalles sobre pruebas con contenedores.
+### Application Properties
+```yaml
+server:
+  port: 8080
 
----
+azure:
+  functions:
+    base-url: ${AZURE_FUNCTIONS_BASE_URL}
+```
 
-## 🧪 Pruebas Locales
+## Testing
 
-### Maven
-- Ejecuta las pruebas con Maven:
-  ```bash
-  mvn clean test
-  ```
-- Puedes usar Azure Functions Core Tools para simular funciones localmente.
+### Postman Collection
+Import the complete Postman collection with 20+ requests organized in workflow examples:
 
-### Postman
-- Importa la colección `Agranelos-BFF.postman_collection.json` en Postman.
-- Importa los entornos desde la carpeta `postman/`:
-  - **Local.postman_environment.json** - Para desarrollo local
-  - **Docker.postman_environment.json** - Para contenedores locales
-  - **AWS.postman_environment.json** - Para despliegue en AWS
-  - **Azure.postman_environment.json** - Para despliegue en Azure
-- La colección incluye ejemplos organizados para:
-  - **Productos:** 5 endpoints con datos de prueba
-  - **Bodegas:** 5 endpoints con datos de prueba
-  - **GraphQL:** 5 consultas de ejemplo (productos, bodegas, queries parametrizadas)
-- Variables preconfiguradas:
-  - `base_url`: http://localhost:8080
-  - `producto_id`: 1
-  - `bodega_id`: 1
-  - `username`: user
-  - `password`: myStrongPassword123
+1. Import `Agranelos-BFF.postman_collection.json`
+2. Select appropriate environment from `postman/` directory
+3. Execute workflow examples for warehouse management
 
-### Ejemplos con cURL
-
+### Automated Testing
 ```bash
-# Listar productos
-curl -u user:myStrongPassword123 http://localhost:8080/api/productos
-
-# Crear bodega
-curl -u user:myStrongPassword123 -X POST http://localhost:8080/api/bodegas \
-  -H "Content-Type: application/json" \
-  -d '{"nombre":"Bodega Norte","ubicacion":"Calle 123","capacidad":3000}'
-
-# Consulta GraphQL
-curl -u user:myStrongPassword123 -X POST http://localhost:8080/api/graphql \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ productos { id nombre precio } }"}'
+# Run comprehensive test suite
+./test-nuevas-funcionalidades.sh
 ```
 
----
+## Container Deployment
 
-## 🔒 Buenas Prácticas
+### Using Podman Compose (Recommended)
+```bash
+# Start services
+podman compose up -d
 
-- No expongas información sensible en logs ni respuestas de error.
-- Valida y sanitiza todas las entradas del usuario.
-- Usa control de versiones (Git) y sigue buenas prácticas de colaboración.
+# View logs
+podman compose logs -f
 
----
-
-## 📂 Estructura del Proyecto
-
-```
-src/
-  main/
-    java/com/agranelos/bff/
-      controller/
-        ProductoController.java
-        BodegaController.java
-        GraphQLController.java
-      dto/
-        ProductoDto.java
-        BodegaDto.java
-        GraphQLRequestDto.java
-      config/
-        SecurityConfig.java
-      exception/
-        GlobalExceptionHandler.java
-      BffApplication.java
-    resources/
-      application.yml
-  test/
-    java/com/agranelos/bff/
-Dockerfile
-docker-compose.yml
-pom.xml
-README.md
-Agranelos-BFF.postman_collection.json
-ENDPOINTS_MAPPING.md
-IMPLEMENTACION_ENDPOINTS.md
+# Stop services
+podman compose down
 ```
 
----
+### Using Podman Play Kube
+```bash
+# Deploy with Kubernetes manifest
+podman play kube k8s-deployment.yml
+```
 
-## 📞 Contacto
+## Development
 
-Para dudas o soporte, contacta al equipo de desarrollo.
+### Project Structure
+```
+agranelos-bff/
+├── src/main/java/com/agranelos/bff/
+│   ├── controller/          # REST Controllers
+│   ├── dto/                 # Data Transfer Objects  
+│   ├── config/              # Configuration classes
+│   └── exception/           # Exception handlers
+├── docs/                    # Documentation (Jekyll)
+├── postman/                 # Postman environments
+└── compose.yml              # Container orchestration
+```
+
+### Build
+```bash
+mvn clean package
+```
+
+### Health Checks
+- **Health**: `GET /actuator/health`
+- **Info**: `GET /actuator/info`
+
+## Contributing
+
+1. Follow Spring Boot conventions
+2. Add tests for new functionality
+3. Update documentation in `/docs`
+4. Test with provided Postman collection
+
+## Technology Stack
+
+- **Runtime**: Java 17, Spring Boot 3.x
+- **Build**: Maven
+- **Containers**: Podman/Docker
+- **Backend**: Azure Functions
+- **Database**: PostgreSQL (via Azure Functions)
+- **Documentation**: Jekyll (GitHub Pages compatible)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For detailed documentation and examples, visit the [documentation site](docs/) or review the comprehensive Postman collection included in this repository.

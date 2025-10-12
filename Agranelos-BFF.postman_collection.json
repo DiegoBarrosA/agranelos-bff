@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Agranelos BFF - API Completa",
-    "description": "Colección Postman para todos los endpoints del BFF de Agranelos (Productos, Bodegas y GraphQL).\n\n## Entornos Disponibles\nEsta colección incluye 4 archivos de entorno en la carpeta `postman/`:\n- **Local**: http://localhost:8080 (desarrollo local)\n- **Docker/Podman**: http://localhost:8080 (contenedor local)\n- **AWS**: https://your-bff-domain.amazonaws.com (producción AWS)\n- **Azure**: https://your-bff-app.azurewebsites.net (producción Azure)\n\n## Cómo usar\n1. Importa la colección en Postman\n2. Importa el entorno que desees usar desde `postman/`\n3. Selecciona el entorno en el dropdown de Postman\n4. ¡Listo para probar!\n\n## Variables\n- `base_url`: URL base del BFF\n- `producto_id`: ID de producto para pruebas\n- `bodega_id`: ID de bodega para pruebas\n- `username`: Usuario para autenticación HTTP Basic\n- `password`: Contraseña para autenticación HTTP Basic\n\n## Autenticación\nTodos los endpoints requieren autenticación HTTP Basic configurada a nivel de colección.",
+    "name": "Agranelos BFF - API Completa + Gestión Mejorada 🆕",
+    "description": "Colección Postman para todos los endpoints del BFF de Agranelos (Productos, Bodegas y GraphQL).\n\n## 🆕 Nuevas Funcionalidades (Octubre 2025)\n- **🔍 Consulta de productos en bodega**: `GET /api/bodegas/{id}/productos`\n- **🔒 Eliminación segura con validación**: `DELETE /api/bodegas/{id}` (validación automática)\n- **⚡ Eliminación forzada con detalles**: `DELETE /api/bodegas/{id}?force=true`\n- **📊 Respuestas enriquecidas**: Información detallada de productos afectados\n\n## Entornos Disponibles\nEsta colección incluye 4 archivos de entorno en la carpeta `postman/`:\n- **Local**: http://localhost:8080 (desarrollo local)\n- **Docker/Podman**: http://localhost:8080 (contenedor local)\n- **AWS**: https://your-bff-domain.amazonaws.com (producción AWS)\n- **Azure**: https://your-bff-app.azurewebsites.net (producción Azure)\n\n## Cómo usar\n1. Importa la colección en Postman\n2. Importa el entorno que desees usar desde `postman/`\n3. Selecciona el entorno en el dropdown de Postman\n4. ¡Listo para probar!\n\n## Variables\n- `base_url`: URL base del BFF\n- `producto_id`: ID de producto para pruebas\n- `bodega_id`: ID de bodega para pruebas\n- `username`: Usuario para autenticación HTTP Basic\n- `password`: Contraseña para autenticación HTTP Basic\n\n## Gestión de Bodegas Mejorada\n### Flujo Recomendado:\n1. **Consultar productos**: `GET /api/bodegas/{id}/productos`\n2. **Eliminación segura**: `DELETE /api/bodegas/{id}` (valida automáticamente)\n3. **Si hay conflicto**: Usar `force=true` o reasignar productos\n4. **Eliminación forzada**: `DELETE /api/bodegas/{id}?force=true`\n\n## Autenticación\nTodos los endpoints requieren autenticación HTTP Basic configurada a nivel de colección.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -173,7 +173,45 @@
           }
         },
         {
-          "name": "Eliminar bodega",
+          "name": "🆕 Consultar productos en bodega",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bodegas/{{bodega_id}}/productos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas", "{{bodega_id}}", "productos"]
+            },
+            "description": "🆕 NUEVA FUNCIONALIDAD: Consulta todos los productos asignados a una bodega específica. Útil para verificar qué productos se verán afectados antes de eliminar una bodega."
+          },
+          "response": [
+            {
+              "name": "Ejemplo - Bodega con productos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/1/productos",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "1", "productos"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": 1,\n    \"nombre\": \"Arroz Premium\",\n    \"cantidad\": 150,\n    \"precio\": 25.50\n  },\n  {\n    \"id\": 3,\n    \"nombre\": \"Azúcar Refinada\",\n    \"cantidad\": 200,\n    \"precio\": 20.00\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "🔄 Eliminar bodega (validación automática)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -181,8 +219,108 @@
               "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
               "host": ["{{base_url}}"],
               "path": ["api", "bodegas", "{{bodega_id}}"]
+            },
+            "description": "🔄 FUNCIONALIDAD MEJORADA: Eliminación segura con validación automática. Si la bodega contiene productos, retornará error 409 Conflict con detalles de los productos afectados."
+          },
+          "response": [
+            {
+              "name": "Ejemplo - Bodega con productos (409 Conflict)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/5",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "5"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"error\": \"La bodega contiene productos\",\n  \"mensaje\": \"Use el parámetro 'force=true' para eliminar la bodega y sus productos, o reasigne los productos primero\",\n  \"productos\": [\n    {\n      \"id\": 1,\n      \"nombre\": \"Arroz Premium\",\n      \"cantidad\": 150,\n      \"precio\": 25.50\n    },\n    {\n      \"id\": 3,\n      \"nombre\": \"Azúcar Refinada\",\n      \"cantidad\": 200,\n      \"precio\": 20.00\n    }\n  ],\n  \"bodegaId\": \"5\"\n}"
+            },
+            {
+              "name": "Ejemplo - Bodega vacía (200 OK)",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/10",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "10"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"mensaje\": \"Bodega eliminada exitosamente\",\n  \"bodegaId\": \"10\",\n  \"productosAfectados\": 0\n}"
             }
-          }
+          ]
+        },
+        {
+          "name": "🆕 Eliminar bodega (forzado con detalles)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bodegas/{{bodega_id}}?force=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bodegas", "{{bodega_id}}"],
+              "query": [
+                {
+                  "key": "force",
+                  "value": "true",
+                  "description": "Fuerza la eliminación sin validaciones previas"
+                }
+              ]
+            },
+            "description": "🆕 NUEVA FUNCIONALIDAD: Eliminación forzada que bypasea las validaciones y proporciona información detallada sobre los productos afectados en la respuesta."
+          },
+          "response": [
+            {
+              "name": "Ejemplo - Eliminación forzada exitosa",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/5?force=true",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "5"],
+                  "query": [
+                    {
+                      "key": "force",
+                      "value": "true"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"mensaje\": \"Bodega eliminada exitosamente\",\n  \"bodegaId\": \"5\",\n  \"productosAfectados\": 2,\n  \"detalleProductos\": [\n    {\n      \"id\": 1,\n      \"nombre\": \"Arroz Premium\",\n      \"cantidad\": 150,\n      \"precio\": 25.50\n    },\n    {\n      \"id\": 3,\n      \"nombre\": \"Azúcar Refinada\",\n      \"cantidad\": 200,\n      \"precio\": 20.00\n    }\n  ],\n  \"advertencia\": \"Los productos han perdido su asignación a esta bodega\"\n}"
+            }
+          ]
         }
       ]
     },
@@ -475,28 +613,167 @@
           }
         }
       ]
+    },
+    {
+      "name": "🆕 Flujos de Trabajo - Gestión de Bodegas",
+      "description": "Ejemplos de flujos completos para la gestión mejorada de bodegas con las nuevas funcionalidades implementadas.",
+      "item": [
+        {
+          "name": "🔍 Flujo A: Consulta Previa y Eliminación Segura",
+          "description": "Ejemplo de flujo completo: consulta productos → intenta eliminación segura → maneja conflictos",
+          "item": [
+            {
+              "name": "1️⃣ Consultar productos en bodega",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}/productos",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}", "productos"]
+                },
+                "description": "Paso 1: Verificar qué productos están en la bodega antes de eliminarla"
+              }
+            },
+            {
+              "name": "2️⃣ Intentar eliminación segura",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}"]
+                },
+                "description": "Paso 2: Intentar eliminación normal (con validación automática)"
+              }
+            },
+            {
+              "name": "3️⃣ Eliminación forzada (si es necesario)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}?force=true",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}"],
+                  "query": [
+                    {
+                      "key": "force",
+                      "value": "true",
+                      "description": "Usar solo si el paso 2 devolvió 409 Conflict"
+                    }
+                  ]
+                },
+                "description": "Paso 3: Si el paso anterior devolvió 409 Conflict, usar eliminación forzada"
+              }
+            }
+          ]
+        },
+        {
+          "name": "⚡ Flujo B: Eliminación Directa con Detalles",
+          "description": "Para casos donde se necesita eliminación inmediata con información completa de impacto",
+          "item": [
+            {
+              "name": "🗑️ Eliminación forzada directa",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}?force=true",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}"],
+                  "query": [
+                    {
+                      "key": "force",
+                      "value": "true",
+                      "description": "Eliminación directa sin validaciones previas"
+                    }
+                  ]
+                },
+                "description": "Eliminación directa que devuelve información completa de productos afectados"
+              }
+            }
+          ]
+        },
+        {
+          "name": "🔄 Flujo C: Auditoría de Bodegas",
+          "description": "Para auditar múltiples bodegas y conocer su contenido antes de operaciones masivas",
+          "item": [
+            {
+              "name": "📋 Listar todas las bodegas",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas"]
+                },
+                "description": "Obtener lista completa de bodegas para auditoría"
+              }
+            },
+            {
+              "name": "🔍 Verificar productos en cada bodega",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}/productos",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}", "productos"]
+                },
+                "description": "Verificar contenido de cada bodega (cambiar bodega_id para diferentes bodegas)"
+              }
+            },
+            {
+              "name": "⚠️ Simular eliminación (sin force)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bodegas/{{bodega_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "bodegas", "{{bodega_id}}"]
+                },
+                "description": "Simular eliminación para ver qué productos se verían afectados (recibirá 409 si hay productos)"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:8080"
+      "value": "http://localhost:8080",
+      "description": "URL base del BFF de Agranelos"
     },
     {
       "key": "producto_id",
-      "value": "1"
+      "value": "1",
+      "description": "ID de producto para pruebas (cambiar según necesidad)"
     },
     {
       "key": "bodega_id",
-      "value": "1"
+      "value": "1",
+      "description": "ID de bodega para pruebas (cambiar según necesidad)"
+    },
+    {
+      "key": "bodega_test_id",
+      "value": "5",
+      "description": "🆕 ID de bodega para pruebas de eliminación (usar una que contenga productos)"
     },
     {
       "key": "username",
-      "value": "user"
+      "value": "user",
+      "description": "Usuario para autenticación HTTP Basic"
     },
     {
       "key": "password",
-      "value": "myStrongPassword123"
+      "value": "myStrongPassword123",
+      "description": "Contraseña para autenticación HTTP Basic"
     }
   ]
 }

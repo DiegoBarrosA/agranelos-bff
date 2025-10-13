@@ -8,7 +8,7 @@ spring:
 # Configuración para invocación de funciones serverless
 azure:
   functions:
-    base-url: ${AZURE_FUNCTIONS_BASE_URL:http://localhost:7071/api}
+    base-url: ${AZURE_FUNCTIONS_BASE_URL:https://agranelos-inventario-functions.azurewebsites.net/api}
 
 # Logging básico
 logging:

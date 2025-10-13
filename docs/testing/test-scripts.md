@@ -40,24 +40,24 @@ Testing Enhanced Warehouse Management BFF
 ==========================================
 
 Test 1: Verifying BFF availability...
-✅ BFF is available at http://localhost:8080
+BFF is available at http://localhost:8080
 
 Test 2: Getting warehouse list...
-✅ Warehouse list obtained correctly (200)
+Warehouse list obtained correctly (200)
 
 Test 3: Testing new endpoint GET /api/bodegas/{id}/productos...
-✅ Warehouse products endpoint works (code: 200)
+Warehouse products endpoint works (code: 200)
 
 Test 4: Testing automatic validation in deletion...
-✅ Automatic validation works (code: 409)
+Automatic validation works (code: 409)
 ℹ️  Warehouse contains products (expected behavior)
 
 Test 5: Testing forced deletion (response structure)...
-✅ Correct response structure in forced deletion
+Correct response structure in forced deletion
 
 Test 6: Verifying existing endpoints compatibility...
-✅ GET /api/productos still works
-✅ POST /api/graphql still works
+GET /api/productos still works
+POST /api/graphql still works
 
 ==========================================
 Testing Summary
@@ -66,7 +66,7 @@ Testing Summary
 - Compatibility with existing endpoints maintained
 - BFF ready for production
 
-✨ Testing completed successfully!
+Testing completed successfully!
 ```
 
 ## Custom Test Scripts
@@ -81,9 +81,9 @@ echo "Testing BFF connectivity..."
 # Test health endpoint
 response=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/actuator/health")
 if [ "$response" = "200" ]; then
-    echo "✅ Health endpoint OK"
+    echo "Health endpoint OK"
 else
-    echo "❌ Health endpoint failed (code: $response)"
+    echo "Health endpoint failed (code: $response)"
     exit 1
 fi
 
@@ -97,9 +97,9 @@ endpoints=(
 for endpoint in "${endpoints[@]}"; do
     response=$(curl -s -o /dev/null -w "%{http_code}" -u user:myStrongPassword123 "$BASE_URL/$endpoint")
     if [ "$response" = "200" ]; then
-        echo "✅ $endpoint OK"
+        echo "$endpoint OK"
     else
-        echo "❌ $endpoint failed (code: $response)"
+        echo "$endpoint failed (code: $response)"
     fi
 done
 ```
@@ -120,10 +120,10 @@ create_response=$(curl -s -X POST "$BASE_URL/api/bodegas" \
     -d '{"nombre":"Test Warehouse","ubicacion":"Test Location","capacidad":1000}')
 
 if echo "$create_response" | grep -q "id"; then
-    echo "✅ Test warehouse created"
+    echo "Test warehouse created"
     warehouse_id=$(echo "$create_response" | grep -o '"id":[0-9]*' | cut -d':' -f2)
 else
-    echo "❌ Failed to create test warehouse"
+    echo "Failed to create test warehouse"
     exit 1
 fi
 
@@ -142,7 +142,7 @@ echo "4. Cleanup - forced deletion..."
 force_response=$(curl -s -X DELETE "$BASE_URL/api/bodegas/$warehouse_id?force=true" -u "$AUTH")
 echo "Force delete response: $force_response"
 
-echo "✅ Warehouse management flow test completed"
+echo "Warehouse management flow test completed"
 ```
 
 ### Performance Test Script
@@ -180,7 +180,7 @@ measure_endpoint "api/bodegas" "GET"
 measure_endpoint "api/bodegas/1/productos" "GET"
 measure_endpoint "api/graphql" "POST" '{"query":"{ productos { id nombre } }"}'
 
-echo "✅ Performance testing completed"
+echo "Performance testing completed"
 ```
 
 ## Container-based Testing
@@ -267,7 +267,7 @@ test_output=$(./test-nuevas-funcionalidades.sh)
 echo "$test_output"
 
 # Check for failures
-if echo "$test_output" | grep -q "❌"; then
+if echo "$test_output" | grep -q "FAIL"; then
     echo "Tests failed!"
     exit 1
 else
@@ -291,9 +291,9 @@ while true; do
     
     # Check health endpoint
     if curl -sf "$BASE_URL/actuator/health" > /dev/null; then
-        echo "[$timestamp] ✅ BFF healthy"
+        echo "[$timestamp] BFF healthy"
     else
-        echo "[$timestamp] ❌ BFF unhealthy"
+        echo "[$timestamp] BFF unhealthy"
         # Add alerting logic here
     fi
     

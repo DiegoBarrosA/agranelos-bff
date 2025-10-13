@@ -195,6 +195,55 @@ public class BodegaController {
             );
     }
 
+    @PostMapping("/{id}/productos")
+    public Mono<ResponseEntity<Object>> asignarProductoABodega(
+        @PathVariable String id,
+        @RequestBody Map<String, Object> asignacionData
+    ) {
+        String url = buildFunctionUrl("/bodegas/" + id + "/productos");
+        return webClient
+            .post()
+            .uri(url)
+            .bodyValue(asignacionData)
+            .retrieve()
+            .bodyToMono(Object.class)
+            .map(ResponseEntity::ok)
+            .onErrorResume(e -> {
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("error", "No se pudo asignar el producto a la bodega");
+                errorMap.put("detalle", e.getMessage());
+                errorMap.put("bodegaId", id);
+                errorMap.put("datos", asignacionData);
+                return Mono.just(
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMap)
+                );
+            });
+    }
+
+    @DeleteMapping("/{id}/productos/{productoId}")
+    public Mono<ResponseEntity<Object>> removerProductoDeBodega(
+        @PathVariable String id,
+        @PathVariable String productoId
+    ) {
+        String url = buildFunctionUrl("/bodegas/" + id + "/productos/" + productoId);
+        return webClient
+            .delete()
+            .uri(url)
+            .retrieve()
+            .bodyToMono(Object.class)
+            .map(ResponseEntity::ok)
+            .onErrorResume(e -> {
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("error", "No se pudo remover el producto de la bodega");
+                errorMap.put("detalle", e.getMessage());
+                errorMap.put("bodegaId", id);
+                errorMap.put("productoId", productoId);
+                return Mono.just(
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMap)
+                );
+            });
+    }
+
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Object>> eliminarBodega(
         @PathVariable String id,

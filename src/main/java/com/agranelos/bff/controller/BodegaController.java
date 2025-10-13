@@ -2,6 +2,7 @@ package com.agranelos.bff.controller;
 
 import com.agranelos.bff.dto.BodegaDto;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -213,7 +214,7 @@ public class BodegaController {
                     if (productosStr.contains("[") && !productosStr.equals("[]")) {
                         return Mono.just(
                             ResponseEntity.status(HttpStatus.CONFLICT).body(
-                                Map.of(
+                                (Object) Map.of(
                                     "error", "La bodega contiene productos",
                                     "mensaje", "Use el parámetro 'force=true' para eliminar la bodega y sus productos, o reasigne los productos primero",
                                     "productos", productos,
@@ -255,25 +256,21 @@ public class BodegaController {
             .uri(url)
             .retrieve()
             .bodyToMono(Object.class)
-            .map(body -> ResponseEntity.ok(
-                Map.of(
-                    "mensaje", "Bodega eliminada exitosamente",
-                    "bodegaId", id,
-                    "productosAfectados", 0
-                )
-            ))
-            .onErrorResume(e ->
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        Map.of(
-                            "error",
-                            "No se pudo eliminar la bodega",
-                            "detalle",
-                            e.getMessage()
-                        )
-                    )
-                )
-            );
+            .map(body -> {
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("mensaje", "Bodega eliminada exitosamente");
+                responseMap.put("bodegaId", id);
+                responseMap.put("productosAfectados", 0);
+                return ResponseEntity.ok((Object) responseMap);
+            })
+            .onErrorResume(e -> {
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("error", "No se pudo eliminar la bodega");
+                errorMap.put("detalle", e.getMessage());
+                return Mono.just(
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body((Object) errorMap)
+                );
+            });
     }
 
     private Mono<ResponseEntity<Object>> eliminarBodegaConDetalles(String id, Object productos) {
@@ -292,28 +289,22 @@ public class BodegaController {
                     productosAfectados = productosStr.split("\\{").length - 1;
                 }
 
-                return ResponseEntity.ok(
-                    Map.of(
-                        "mensaje", "Bodega eliminada exitosamente",
-                        "bodegaId", id,
-                        "productosAfectados", productosAfectados,
-                        "detalleProductos", productos,
-                        "advertencia", "Los productos han perdido su asignación a esta bodega"
-                    )
-                );
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("mensaje", "Bodega eliminada exitosamente");
+                responseMap.put("bodegaId", id);
+                responseMap.put("productosAfectados", productosAfectados);
+                responseMap.put("detalleProductos", productos);
+                responseMap.put("advertencia", "Los productos han perdido su asignación a esta bodega");
+                return ResponseEntity.ok((Object) responseMap);
             })
-            .onErrorResume(e ->
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                        Map.of(
-                            "error",
-                            "Error eliminando la bodega",
-                            "detalle",
-                            e.getMessage(),
-                            "productosQueSeAfectaron", productos
-                        )
-                    )
-                )
-            );
+            .onErrorResume(e -> {
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("error", "Error eliminando la bodega");
+                errorMap.put("detalle", e.getMessage());
+                errorMap.put("productosQueSeAfectaron", productos);
+                return Mono.just(
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((Object) errorMap)
+                );
+            });
     }
 }
